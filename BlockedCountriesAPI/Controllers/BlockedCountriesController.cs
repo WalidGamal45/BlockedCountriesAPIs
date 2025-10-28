@@ -70,38 +70,39 @@ namespace BDAssignment.Presentation.Controllers
         public async Task<IActionResult> LookupIp([FromQuery] string ipAddress)
         {
             if (string.IsNullOrWhiteSpace(ipAddress))
-                return BadRequest("من فضلك أدخل IP Address صالح");
+                return BadRequest("Please enter IP Address valid");
 
             var result = await _geoLookupService.GetCountryByIPAsync(ipAddress);
 
             if (result == null)
-                return NotFound("ما قدرناش نجيب بيانات الـ IP ");
+                return NotFound(" We could not get the IP data. ");
 
             return Ok(result);
         }
 
-        //  التحقق هل الـ (IP) محظور
         [HttpGet("ip/check-block")]
         public async Task<IActionResult> CheckIfIpBlocked([FromQuery] string ipAddress)
         {
-            // لو المستخدم ما كتبش IP، نجيب IP بتاعه
-
             if (string.IsNullOrWhiteSpace(ipAddress))
                 ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
+            // 🔹 الخطوة 1: بنجيب بيانات الـ IP من موقع ipapi.co
             var ipInfo = await _geoLookupService.GetCountryByIPAsync(ipAddress);
 
-            if (ipInfo == null)
-                return BadRequest("ما قدرناش نجيب بيانات الـ IP");
+            // 🔹 الخطوة 2: بنأكد إن عندنا كود دولة
+            if (ipInfo == null || string.IsNullOrEmpty(ipInfo.CountryCode))
+                return BadRequest("We could not get the country data from the (IP) OR code. The reference is empty.");
 
-            // نشوف هل الدولة محظورة
+            // 🔹 الخطوة 3: بنستخدم الكود علشان نعرف هل الدولة دي محظورة ولا لا
             bool isBlocked = _countryBlockService.IsBlocked(ipInfo.CountryCode);
 
             if (isBlocked)
-                return Ok($" الـ IP {ipAddress} تابع لدولة محظورة: {ipInfo.CountryName} ({ipInfo.CountryCode})");
+                return Ok($"الـ IP {ipAddress} تابع لدولة محظورة: {ipInfo.CountryName} ({ipInfo.CountryCode})");
 
-            return Ok($" الـ IP {ipAddress} مش محظور (الدولة: {ipInfo.CountryName} - {ipInfo.CountryCode})");
+            return Ok($"الـ IP {ipAddress} مش محظور (الدولة: {ipInfo.CountryName} - {ipInfo.CountryCode})");
         }
+
+
         //  حذف دولة محظورة
         [HttpDelete("block/{countryCode}")]
         public IActionResult UnblockCountry(string countryCode)
@@ -129,6 +130,7 @@ namespace BDAssignment.Presentation.Controllers
             var result = _countryBlockService.GetBlockedCountriesPaged(search, page, pageSize);
             return Ok(result);
         }
+
 
 
 

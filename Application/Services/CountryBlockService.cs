@@ -44,15 +44,20 @@ namespace BDAssignment.Application.Services
         //  إضافة حظر دائم
         public bool BlockCountry(string countryCode, string countryName)
         {
-            var added = _blockedCountries.TryAdd(countryCode, new BlockedCountry
+            if (string.IsNullOrWhiteSpace(countryCode))
+                return false;
+
+            var key = countryCode.Trim().ToUpperInvariant();
+
+            var added = _blockedCountries.TryAdd(key, new BlockedCountry
             {
-                CountryCode = countryCode,
-                CountryName = countryName,
+                CountryCode = key,
+                CountryName = countryName?.Trim(),
                 BlockType = "Permanent",
                 ExpiryDate = null
             });
 
-            if (added) SaveToFile(); // حفظ بعد الإضافة
+            if (added) SaveToFile();
             return added;
         }
 
@@ -112,8 +117,13 @@ namespace BDAssignment.Application.Services
         //  التحقق إذا كانت الدولة محظورة
         public bool IsBlocked(string countryCode)
         {
-            return _blockedCountries.ContainsKey(countryCode);
+            if (string.IsNullOrWhiteSpace(countryCode))
+                return false;
+
+            var key = countryCode.Trim().ToUpperInvariant();
+            return _blockedCountries.ContainsKey(key);
         }
+
         // عرض الدول المحظورة مع البحث والتجزئة (Pagination + Filter)
         public IEnumerable<BlockedCountry> GetBlockedCountriesPaged(string? search = null, int page = 1, int pageSize = 10)
         {

@@ -1,7 +1,19 @@
 [
   {
+    "CountryCode": "eg",
+    "CountryName": "egypt",
+    "BlockType": "Permanent",
+    "ExpiryDate": null
+  },
+  {
     "CountryCode": "la",
     "CountryName": "libia",
+    "BlockType": "Permanent",
+    "ExpiryDate": null
+  },
+  {
+    "CountryCode": "EG",
+    "CountryName": "Egypt",
     "BlockType": "Permanent",
     "ExpiryDate": null
   }
