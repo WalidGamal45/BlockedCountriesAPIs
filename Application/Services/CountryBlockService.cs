@@ -1,0 +1,118 @@
+﻿using BDAssignment.Application.Models;
+using BDAssignment.Domain.Entities;
+using System.Collections.Concurrent;
+using System.Text.Json;
+
+namespace BDAssignment.Application.Services
+{
+    public class CountryBlockService
+    {
+        private readonly ConcurrentDictionary<string, BlockedCountry> _blockedCountries = new();
+        private readonly string _filePath = "blocked_countries.json";
+
+        // تحميل البيانات من الملف عند بدء التشغيل
+        public CountryBlockService()
+        {
+            LoadFromFile();
+        }
+
+        //  تحميل البيانات من الملف
+        private void LoadFromFile()
+        {
+            if (File.Exists(_filePath))
+            {
+                var json = File.ReadAllText(_filePath);
+                var list = JsonSerializer.Deserialize<List<BlockedCountry>>(json);
+                if (list != null)
+                {
+                    foreach (var item in list)
+                        _blockedCountries[item.CountryCode] = item;
+                }
+            }
+        }
+
+        //  حفظ البيانات بعد أي تعديل
+        private void SaveToFile()
+        {
+            var json = JsonSerializer.Serialize(
+                _blockedCountries.Values.ToList(),
+                new JsonSerializerOptions { WriteIndented = true }
+            );
+            File.WriteAllText(_filePath, json);
+        }
+
+        //  إضافة حظر دائم
+        public bool BlockCountry(string countryCode, string countryName)
+        {
+            var added = _blockedCountries.TryAdd(countryCode, new BlockedCountry
+            {
+                CountryCode = countryCode,
+                CountryName = countryName,
+                BlockType = "Permanent",
+                ExpiryDate = null
+            });
+
+            if (added) SaveToFile(); // حفظ بعد الإضافة
+            return added;
+        }
+
+        //  إضافة حظر مؤقت
+        public bool TemporalBlockCountry(TemporalBlockRequestDto request)
+        {
+            // تحقق إن المدة بين 1 و 1440 دقيقة
+            if (request.DurationMinutes < 1 || request.DurationMinutes > 1440)
+                throw new ArgumentException("المدة لازم تكون بين 1 و 1440 دقيقة");
+
+            // لو الدولة محظورة بالفعل
+            if (_blockedCountries.ContainsKey(request.CountryCode))
+                return false;
+
+            var expiry = DateTime.UtcNow.AddMinutes(request.DurationMinutes);
+
+            var added = _blockedCountries.TryAdd(request.CountryCode, new BlockedCountry
+            {
+                CountryCode = request.CountryCode,
+                CountryName = request.CountryName,
+                BlockType = "Temporal",
+                ExpiryDate = expiry
+            });
+
+            if (added) SaveToFile(); // حفظ بعد الإضافة
+            return added;
+        }
+
+        //  إزالة الدول اللي انتهى وقتها
+        public void RemoveExpiredBlocks()
+        {
+            var expired = _blockedCountries.Values
+                .Where(x => x.BlockType == "Temporal" && x.ExpiryDate <= DateTime.UtcNow)
+                .Select(x => x.CountryCode)
+                .ToList();
+
+            foreach (var code in expired)
+                _blockedCountries.TryRemove(code, out _);
+
+            if (expired.Any()) SaveToFile(); // حفظ بعد التنظيف
+        }
+
+        //  عرض كل الدول المحظورة
+        public IEnumerable<BlockedCountry> GetAllBlockedCountries()
+        {
+            return _blockedCountries.Values;
+        }
+
+        //  حذف دولة من الحظر
+        public bool UnblockCountry(string countryCode)
+        {
+            var removed = _blockedCountries.TryRemove(countryCode, out _);
+            if (removed) SaveToFile(); // حفظ بعد الحذف
+            return removed;
+        }
+
+        //  التحقق إذا كانت الدولة محظورة
+        public bool IsBlocked(string countryCode)
+        {
+            return _blockedCountries.ContainsKey(countryCode);
+        }
+    }
+}
