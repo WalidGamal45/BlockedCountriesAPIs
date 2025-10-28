@@ -114,5 +114,29 @@ namespace BDAssignment.Application.Services
         {
             return _blockedCountries.ContainsKey(countryCode);
         }
+        // عرض الدول المحظورة مع البحث والتجزئة (Pagination + Filter)
+        public IEnumerable<BlockedCountry> GetBlockedCountriesPaged(string? search = null, int page = 1, int pageSize = 10)
+        {
+            var query = _blockedCountries.Values.AsEnumerable();
+
+            //  بحث بالاسم أو الكود
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                search = search.ToLower();
+                query = query.Where(c =>
+                    c.CountryCode.ToLower().Contains(search) ||
+                    c.CountryName.ToLower().Contains(search));
+            }
+
+            //  ترتيب أبجدي (اختياري)
+            query = query.OrderBy(c => c.CountryName);
+
+            //  تطبيق التجزئة
+            return query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+
     }
 }

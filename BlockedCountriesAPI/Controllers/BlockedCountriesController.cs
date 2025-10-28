@@ -122,6 +122,14 @@ namespace BDAssignment.Presentation.Controllers
             var result = await _testIpApiService.GetIpInfoAsync(ipAddress);
             return Ok(result);
         }
+        //  عرض الدول مع Pagination وSearch
+        [HttpGet("paged")]
+        public IActionResult GetPaged([FromQuery] string? search, [FromQuery] int page = 1, [FromQuery] int pageSize = 5)
+        {
+            var result = _countryBlockService.GetBlockedCountriesPaged(search, page, pageSize);
+            return Ok(result);
+        }
+
 
 
     }
