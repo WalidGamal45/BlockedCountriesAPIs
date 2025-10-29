@@ -15,14 +15,15 @@
 4- خدمة خلفية (Background Service) تنظف الدول المنتهية تلقائيًا كل دقيقة  
 5- استعلام الدولة من خلال عنوان IP باستخدام موقع [ipapi.co](https://ipapi.co)  
 6- عرض النتائج مع **Pagination** و **Search / Filter**  
-7- واجهة Swagger جاهزة للتجربة  
+7- واجهة Swagger جاهزة للتجربة 
+<hr>
 
----##  هيكل المشروع 
- BDAssignment   ***************************************************************************************************************
+-----> ##  هيكل المشروع 
+ BDAssignment   
 
 
-1- Domain ---> ( Entities , Enums ) <hr>
-2- Application ---> ( Interfaces , Services , DTOs ) <hr>
+1- Domain ---> ( Entities , Enums ) <br>
+2- Application ---> ( Interfaces , Services , DTOs ) <br>
 3- Presentation ---> ( Controllers , Program.cs , appsettings.json , BackgroundServices ,  blocked_countries.json ← بيانات الحظر محفوظة هنا)
 
 ---
