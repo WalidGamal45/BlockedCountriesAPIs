@@ -17,38 +17,13 @@
 6- عرض النتائج مع **Pagination** و **Search / Filter**  
 7- واجهة Swagger جاهزة للتجربة  
 
----##  هيكل المشروع
-BDAssignment/
-│
-├── Domain/
-│ ├── Entities/
-│ │ └── BlockedCountry.cs
-│ └── Enums/
-│ └── CountryBlockType.cs
-│
-├── Application/
-│ ├── Interfaces/
-│ │ ├── IGeoLookupService.cs
-│ │ ├── ICountryBlockService.cs
-│ │ └── IBlockedLogService.cs
-│ ├── Models/
-│ │ ├── BlockCountryRequestDto.cs
-│ │ ├── TemporalBlockRequestDto.cs
-│ │ └── IpLookupResultDto.cs
-│ └── Services/
-│ ├── CountryBlockService.cs
-│ ├── GeoLookupService.cs
-│ └── TestIpApiService.cs
-│
-├── Presentation/
-│ ├── Controllers/
-│ │ └── BlockedCountriesController.cs
-│ ├── BackgroundServices/
-│ │ └── TemporalBlockCleanupService.cs
-│ ├── Program.cs
-│ └── appsettings.json
-│
-└── blocked_countries.json ← بيانات الحظر محفوظة هنا
+---##  هيكل المشروع 
+ BDAssignment   ***************************************************************************************************************
+
+
+1- Domain ---> ( Entities , Enums ) <hr>
+2- Application ---> ( Interfaces , Services , DTOs ) <hr>
+3- Presentation ---> ( Controllers , Program.cs , appsettings.json , BackgroundServices ,  blocked_countries.json ← بيانات الحظر محفوظة هنا)
 
 ---
 
