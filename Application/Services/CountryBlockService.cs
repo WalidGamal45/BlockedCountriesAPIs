@@ -10,13 +10,13 @@ namespace BDAssignment.Application.Services
         private readonly ConcurrentDictionary<string, BlockedCountry> _blockedCountries = new();
         private readonly string _filePath = "blocked_countries.json";
 
-        // تحميل البيانات من الملف عند بدء التشغيل
+        // Load file from file on startup
         public CountryBlockService()
         {
             LoadFromFile();
         }
 
-        //  تحميل البيانات من الملف
+        //  Load data from file
         private void LoadFromFile()
         {
             if (File.Exists(_filePath))
@@ -31,7 +31,7 @@ namespace BDAssignment.Application.Services
             }
         }
 
-        //  حفظ البيانات بعد أي تعديل
+        //  Save data after any modification
         private void SaveToFile()
         {
             var json = JsonSerializer.Serialize(
@@ -41,7 +41,7 @@ namespace BDAssignment.Application.Services
             File.WriteAllText(_filePath, json);
         }
 
-        //  إضافة حظر دائم
+        //  Add permanent block
         public bool BlockCountry(string countryCode, string countryName)
         {
             if (string.IsNullOrWhiteSpace(countryCode))
@@ -61,7 +61,7 @@ namespace BDAssignment.Application.Services
             return added;
         }
 
-        //  إضافة حظر مؤقت
+        //  Add a temporary block 
         public bool TemporalBlockCountry(TemporalBlockRequestDto request)
         {
             // تحقق إن المدة بين 1 و 1440 دقيقة

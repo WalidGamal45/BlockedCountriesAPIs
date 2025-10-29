@@ -6,6 +6,12 @@
     "ExpiryDate": null
   },
   {
+    "CountryCode": "MR",
+    "CountryName": "Maghrab",
+    "BlockType": "Temporal",
+    "ExpiryDate": "2025-10-29T00:22:13.4939683Z"
+  },
+  {
     "CountryCode": "la",
     "CountryName": "libia",
     "BlockType": "Permanent",

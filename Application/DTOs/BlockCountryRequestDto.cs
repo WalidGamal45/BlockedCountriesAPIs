@@ -2,7 +2,7 @@
 {
     public class BlockCountryRequestDto
     {
-        public string CountryCode { get; set; }   // مثال: "US" أو "EG"
-        public string CountryName { get; set; }   // مثال: "United States" أو "Egypt"
+        public string CountryCode { get; set; }   // like => "US"  or  "EG"
+        public string CountryName { get; set; }   // like => "United States"  or  "Egypt"
     }
 }

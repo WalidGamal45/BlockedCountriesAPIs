@@ -65,7 +65,7 @@ namespace BDAssignment.Presentation.Controllers
             return Ok(_countryBlockService.GetAllBlockedCountries());
         }
 
-        //  جلب بيانات الدولة من IP
+        //  ip <-- جلب بيانات الدولة من 
         [HttpGet("ip/lookup")]
         public async Task<IActionResult> LookupIp([FromQuery] string ipAddress)
         {
@@ -86,14 +86,14 @@ namespace BDAssignment.Presentation.Controllers
             if (string.IsNullOrWhiteSpace(ipAddress))
                 ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-            // 🔹 الخطوة 1: بنجيب بيانات الـ IP من موقع ipapi.co
+            //  الخطوة 1: بنجيب بيانات الـ IP من موقع ipapi.co
             var ipInfo = await _geoLookupService.GetCountryByIPAsync(ipAddress);
 
-            // 🔹 الخطوة 2: بنأكد إن عندنا كود دولة
+            //  الخطوة 2: بنأكد إن عندنا كود دولة
             if (ipInfo == null || string.IsNullOrEmpty(ipInfo.CountryCode))
                 return BadRequest("We could not get the country data from the (IP) OR code. The reference is empty.");
 
-            // 🔹 الخطوة 3: بنستخدم الكود علشان نعرف هل الدولة دي محظورة ولا لا
+            //  الخطوة 3: بنستخدم الكود علشان نعرف هل الدولة دي محظورة ولا لا
             bool isBlocked = _countryBlockService.IsBlocked(ipInfo.CountryCode);
 
             if (isBlocked)
@@ -113,7 +113,7 @@ namespace BDAssignment.Presentation.Controllers
             bool removed = _countryBlockService.UnblockCountry(countryCode);
 
             if (!removed)
-                return NotFound("الدولة دي مش موجودة في قائمة الحظر ❌");
+                return NotFound("الدولة دي مش موجودة في قائمة الحظر ");
 
             return Ok($"{countryCode} تم إزالتها من قائمة الحظر ");
         }

@@ -2,8 +2,8 @@
 {
     public class TemporalBlockRequestDto
     {
-        public string CountryCode { get; set; }     // مثال: "EG"
-        public string CountryName { get; set; }     // مثال: "Egypt"
-        public int DurationMinutes { get; set; }    // عدد الدقايق للحظر
+        public string CountryCode { get; set; }   
+        public string CountryName { get; set; }   
+        public int DurationMinutes { get; set; }  
     }
-}
+}                                                 
